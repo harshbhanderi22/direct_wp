@@ -1,0 +1,2 @@
+const userGuidance =
+    "1. Enter the recipient's mobile number with country code (91XXXXXXXXXX) and an optional message.\n2. Tap the \"Send\" button.\n3. The app will open WhatsApp with the entered contact number and pre-filled message.\n4. Directly send the message without saving the number.\n5. Enjoy hassle-free and efficient communication via WhatsApp.\n6. Developer Contact: harshbhanderi228@gmail.com";
