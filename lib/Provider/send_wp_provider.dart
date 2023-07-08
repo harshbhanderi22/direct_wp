@@ -19,10 +19,10 @@ class WhatsAppProvider with ChangeNotifier {
     setLoading(true);
 
     String url =
-        "https://wa.me/${contactController.text}?text=${messageController.text}";
-var encoded = Uri.encodeFull(url);
+        "whatsapp://send?phone=${contactController.text}&text=${Uri.encodeComponent(messageController.text)}";
+    var encoded = Uri.encodeFull(url);
     if (await canLaunchUrl(Uri.parse(encoded))) {
-      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+      await launchUrl(Uri.parse(encoded));
       setLoading(false);
     } else {
       setLoading(false);
