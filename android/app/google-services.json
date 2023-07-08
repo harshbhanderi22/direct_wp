@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1080850452183",
+    "project_id": "direct-wp",
+    "storage_bucket": "direct-wp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1080850452183:android:7709e2f95cc75e722e2a92",
+        "android_client_info": {
+          "package_name": "com.bhanderi.directwp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1080850452183-r5ueikgf11jirsfvuhvihm8nifldqroc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOwSbhGh_s8FQSYm3rYhQetzfN5ZRM3xs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1080850452183-r5ueikgf11jirsfvuhvihm8nifldqroc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
