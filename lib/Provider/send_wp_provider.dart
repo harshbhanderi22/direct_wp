@@ -17,7 +17,6 @@ class WhatsAppProvider with ChangeNotifier {
 
   void launchWp() async {
     setLoading(true);
-
     String url =
         "whatsapp://send?phone=${contactController.text}&text=${Uri.encodeComponent(messageController.text)}";
     var encoded = Uri.encodeFull(url);

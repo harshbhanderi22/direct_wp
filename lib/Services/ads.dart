@@ -1,48 +1,81 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:whatsapp_direct/firebase_options.dart';
 
-class AdMob{
+class AdMob {
+  late String openAdUnitId;
+  late String bannerAdUnitId =
+      ""; // Make it static to avoid multiple instances of the class having different values
+  late AppOpenAd openAd;
+  late String rewardAdId = "";
 
-  AppOpenAd? openAd;
-  Future<void> loadopenad() async{
-    String openad = "";
-    await Firebase.initializeApp(options: DefaultFirebaseOptions
-        .currentPlatform,);
+  Future<void> loadAdUnitIds() async {
     FirebaseFirestore store = FirebaseFirestore.instance;
-    var stream =
-    await store.collection("ads").doc("p5XI1a0RarmmsgOr9HNm").get();
-    Map<String, dynamic> data = stream.data() as Map<String, dynamic>;
-    openad = data["open"];
-    await AppOpenAd.load(
-        adUnitId: openad,
-        request: const AdRequest(),
-        adLoadCallback: AppOpenAdLoadCallback(
-            onAdLoaded: (ad){
-              //print("Open Ad Loaded");
-              openAd = ad;
-              openAd!.show();
-            },
-            onAdFailedToLoad: (ad){
-              //print("Open ad failed");
-            }),
-        orientation: AppOpenAd.orientationPortrait);
+    try {
+      var snapshot =
+          await store.collection("ads").doc("p5XI1a0RarmmsgOr9HNm").get();
+      var data = snapshot.data() as Map<String, dynamic>;
+      print(data.toString());
+      openAdUnitId = data["open"];
+      bannerAdUnitId = data[
+          "banner"]; // Assuming you have a banner ad unit ID in your Firebase data
+      rewardAdId = data["reward"];
+    } catch (e) {
+      // Handle errors, e.g., data not found in Firestore
+      print("Error loading ad unit IDs: $e");
+    }
   }
 
-  BannerAd? bannerAd = BannerAd(
-      size: AdSize.banner,
-      adUnitId: "ca-app-pub-3940256099942544/6300978111",
-      listener: BannerAdListener(
-          onAdLoaded: (ad){
-            print("Ad is loaded");
+  Future<void> loadOpenAd() async {
+    if (openAdUnitId.isNotEmpty) {
+      await AppOpenAd.load(
+        adUnitId: openAdUnitId,
+        request: const AdRequest(),
+        adLoadCallback: AppOpenAdLoadCallback(
+          onAdLoaded: (ad) {
+            print("Open Ad Loaded");
+            openAd = ad;
+            openAd.show();
           },
-          onAdFailedToLoad: (ad, error){
-            ad.dispose();
-            print(error);
-          }
-      ),
-      request: const AdRequest()
-  );
-  
+          onAdFailedToLoad: (ad) {
+            print("Open ad failed");
+          },
+        ),
+        orientation: AppOpenAd.orientationPortrait,
+      );
+    }
+  }
+
+ static RewardedAd? rewardedAd;
+
+  void createRewardAd() {
+    RewardedAd.load(
+        adUnitId: rewardAdId,
+        request: const AdRequest(),
+        rewardedAdLoadCallback: RewardedAdLoadCallback(
+            onAdLoaded: (ad) {
+              rewardedAd = ad;
+            },
+            onAdFailedToLoad: (error) {}));
+  }
+
+  void showRewardAd(Function onSuccess) {
+    if (rewardedAd != null) {
+      rewardedAd!.fullScreenContentCallback =
+          FullScreenContentCallback(onAdDismissedFullScreenContent: (ad) {
+        ad.dispose();
+        createRewardAd();
+      }, onAdFailedToShowFullScreenContent: (ad, error) {
+        ad.dispose();
+        createRewardAd();
+      }, onAdWillDismissFullScreenContent: (ad) {
+        ad.dispose();
+        createRewardAd();
+      });
+      rewardedAd!.show(onUserEarnedReward: (ad, reward) {
+        onSuccess();
+      });
+    } else {
+      print("null");
+    }
+  }
 }
